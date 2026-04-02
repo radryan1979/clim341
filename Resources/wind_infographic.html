@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wind Resource Assessment – Mt. Tom</title>
+<style>
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:13px;
+    color:#1a1a1a;
+    background:#f5f4f0;
+    padding:28px;
+    width:960px;
+  }
+  .infog{width:100%}
+
+  /* Hero */
+  .hero{
+    background:linear-gradient(135deg,#0c447c 0%,#185FA5 60%,#378ADD 100%);
+    border-radius:12px;
+    padding:28px 28px 22px;
+    color:#fff;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-svg{position:absolute;top:0;right:0;bottom:0;width:260px;opacity:.08;pointer-events:none}
+  .tags{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .tag{
+    background:rgba(255,255,255,.18);
+    border:0.5px solid rgba(255,255,255,.35);
+    border-radius:20px;
+    padding:3px 12px;
+    font-size:11px;
+    font-weight:500;
+    color:#fff;
+  }
+  .hero h1{font-size:22px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+  .hero p{font-size:13px;opacity:.85;max-width:580px;line-height:1.6}
+
+  /* Grid layouts */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .grid1{margin-bottom:14px}
+
+  /* Cards */
+  .card{
+    background:#fff;
+    border:0.5px solid #dddbd3;
+    border-radius:12px;
+    padding:18px;
+  }
+  .card-label{
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.09em;
+    color:#888780;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  .card h2{font-size:15px;font-weight:600;margin-bottom:10px;color:#1a1a1a}
+  .card p{font-size:12.5px;color:#4a4a48;line-height:1.65}
+
+  /* Equation box */
+  .eq{
+    font-family:'Courier New',monospace;
+    font-size:12px;
+    background:#f5f4f0;
+    border:0.5px solid #dddbd3;
+    border-radius:6px;
+    padding:8px 12px;
+    margin:8px 0;
+    color:#1a1a1a;
+    line-height:1.8;
+  }
+  .eq .var{color:#185FA5;font-weight:500}
+  .eq .note{color:#888780;font-size:10.5px}
+
+  /* Highlights */
+  .highlight{color:#185FA5;font-weight:500}
+  .accent{color:#0F6E56}
+  .warn{color:#854F0B}
+
+  /* Divider */
+  .divider{border:none;border-top:0.5px solid #dddbd3;margin:10px 0}
+
+  /* Stat row */
+  .stat-row{display:flex;gap:10px;margin:10px 0}
+  .stat{flex:1;background:#f5f4f0;border-radius:8px;padding:8px 10px;text-align:center}
+  .stat .val{font-size:18px;font-weight:600;color:#1a1a1a}
+  .stat .lbl{font-size:10px;color:#888780;margin-top:2px}
+
+  /* Steps */
+  .steps{display:flex;flex-direction:column;gap:7px}
+  .step{display:flex;gap:10px;align-items:flex-start}
+  .step-num{
+    width:20px;height:20px;border-radius:50%;
+    background:#E6F1FB;color:#0C447C;
+    font-size:10px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
+  }
+  .step-text{font-size:12.5px;color:#4a4a48;line-height:1.55}
+  .step-text strong{color:#1a1a1a;font-weight:500}
+
+  /* Table */
+  .table-simple{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+  .table-simple th{text-align:left;color:#888780;font-weight:500;padding:4px 8px;border-bottom:0.5px solid #dddbd3}
+  .table-simple td{padding:5px 8px;color:#4a4a48;border-bottom:0.5px solid #dddbd3}
+  .table-simple tr:last-child td{border-bottom:none}
+  code{font-family:'JetBrains Mono',monospace;font-size:11px;background:#f5f4f0;padding:1px 4px;border-radius:3px}
+
+  /* SVG wrapper */
+  .svgwrap{width:100%;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="infog">
+
+<!-- HERO -->
+<div class="hero">
+  <svg class="hero-svg" viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid meet">
+    <circle cx="210" cy="70" r="70" fill="#fff"/>
+    <line x1="210" y1="70" x2="210" y2="-10" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+    <line x1="210" y1="70" x2="140" y2="108" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+    <line x1="210" y1="70" x2="280" y2="108" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+    <rect x="204" y="70" width="12" height="130" rx="4" fill="#fff"/>
+    <ellipse cx="210" cy="200" rx="55" ry="9" fill="#fff" opacity=".5"/>
+  </svg>
+  <div class="tags">
+    <span class="tag">Wind Resource Assessment</span>
+    <span class="tag">Mt. Tom, NE United States</span>
+    <span class="tag">Aeolien Industries</span>
+  </div>
+  <h1>From Surface Wind to Turbine Power</h1>
+  <p>A three-part data exercise: characterizing site wind, extrapolating to hub height, and calculating available energy from a commercial turbine.</p>
+</div>
+
+<!-- ROW 1: two cards -->
+<div class="grid2">
+  <div class="card">
+    <div class="card-label">Part 1 · Site Overview</div>
+    <h2>What is a wind resource assessment?</h2>
+    <p>Before building a wind turbine, an energy company must characterize the wind at the proposed site — how fast it blows, how variable it is, and when it occurs. This drives the engineering and financial case for the project.</p>
+    <hr class="divider">
+    <p><span class="highlight">Mt. Tom</span> is a ridge in western Massachusetts with persistent winds due to its elevation above surrounding terrain — a classic inland wind resource site in the northeastern U.S.</p>
+    <hr class="divider">
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Describe the dataset</strong> — 10-minute interval wind speed records from a met mast.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Compute statistics</strong> — mean, standard deviation, max/min wind speeds.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Visualize</strong> — time series plots using decimal day timestamps.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Part 1 · Descriptive Statistics</div>
+    <h2>Characterizing site wind</h2>
+    <p>Raw data from a meteorological station gives a distribution of wind speeds over the measurement period. Key statistics describe the resource:</p>
+    <div class="stat-row">
+      <div class="stat"><div class="val">Ū</div><div class="lbl">Mean wind speed</div></div>
+      <div class="stat"><div class="val">σ</div><div class="lbl">Std deviation</div></div>
+      <div class="stat"><div class="val">U<sub>max</sub></div><div class="lbl">Peak gust</div></div>
+    </div>
+    <hr class="divider">
+    <p style="font-size:11px;color:#888780;margin-bottom:5px">Converting the time axis</p>
+    <div class="eq">
+      <span class="var">Day</span> = Hour ÷ 24<br>
+      <span class="note">Converts cumulative hour count → decimal day of month</span>
+    </div>
+    <p>Using decimal days rather than raw hour numbers makes seasonal patterns in the time series much easier to read visually.</p>
+  </div>
+</div>
+
+<!-- ROW 2: log law full width -->
+<div class="card grid1">
+  <div class="card-label">Parts 1 &amp; 2 · Wind Profile Theory</div>
+  <h2>The logarithmic wind profile (log law)</h2>
+  <div class="grid2" style="gap:16px;margin-bottom:0">
+    <div>
+      <p>Meteorological stations measure wind at <span class="highlight">2–3 m</span> above the surface — but turbine hubs sit at <span class="highlight">40–100 m</span>. Wind speed increases with height due to surface friction. The <strong>log law</strong> approximates this vertical profile:</p>
+      <div class="eq">
+        <span class="var">U(z)</span> = <span class="var">U<sub>stn</sub></span> × ln(<span class="var">z</span> / <span class="var">z₀</span>) / ln(<span class="var">z<sub>stn</sub></span> / <span class="var">z₀</span>)
+      </div>
+      <table class="table-simple">
+        <thead><tr><th>Symbol</th><th>Meaning</th><th>Value used</th></tr></thead>
+        <tbody>
+          <tr><td><code>z</code></td><td>Target height</td><td>60 m, then 100 m</td></tr>
+          <tr><td><code>z<sub>stn</sub></code></td><td>Sensor height</td><td>2.5 m</td></tr>
+          <tr><td><code>z₀</code></td><td>Surface roughness length</td><td>Site-dependent (table)</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px;font-size:11.5px;color:#888780">Surface roughness z₀ varies by terrain — open farmland (~0.03 m), scrubland (~0.1 m), forest (~0.5 m). Students select from a provided reference table.</p>
+    </div>
+    <div>
+      <div class="svgwrap">
+        <svg width="100%" viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+          <!-- axes -->
+          <line x1="55" y1="15" x2="55" y2="195" stroke="#888780" stroke-width="0.8" marker-end="url(#arr)"/>
+          <line x1="55" y1="195" x2="310" y2="195" stroke="#888780" stroke-width="0.8" marker-end="url(#arr)"/>
+          <!-- log curve -->
+          <path d="M55 193 Q68 168 84 140 Q107 102 140 76 Q178 52 225 38 Q258 30 300 24" fill="none" stroke="#185FA5" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- height lines -->
+          <line x1="55" y1="155" x2="300" y2="155" stroke="#E24B4A" stroke-width="1" stroke-dasharray="4 3"/>
+          <line x1="55" y1="95"  x2="300" y2="95"  stroke="#1D9E75" stroke-width="1" stroke-dasharray="4 3"/>
+          <line x1="55" y1="38"  x2="300" y2="38"  stroke="#BA7517" stroke-width="1" stroke-dasharray="4 3"/>
+          <!-- dots -->
+          <circle cx="84"  cy="155" r="4.5" fill="#E24B4A"/>
+          <circle cx="84"  cy="95"  r="4.5" fill="#1D9E75"/>
+          <circle cx="84"  cy="38"  r="4.5" fill="#BA7517"/>
+          <!-- labels -->
+          <text font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#E24B4A" x="93" y="158">2.5 m (sensor)</text>
+          <text font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#1D9E75" x="93" y="98">60 m (original hub)</text>
+          <text font-family="Arial,Helvetica,sans-serif" font-size="10.5" fill="#BA7517" x="93" y="41">100 m (revised hub)</text>
+          <!-- axis labels -->
+          <text font-family="Arial,Helvetica,sans-serif" font-size="10" fill="#888780" x="50" y="12" text-anchor="middle">z (m)</text>
+          <text font-family="Arial,Helvetica,sans-serif" font-size="10" fill="#888780" x="308" y="208" text-anchor="middle">U (m/s)</text>
+          <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#888780" x="180" y="215" text-anchor="middle">Wind speed increases logarithmically with height</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 3: cut-in/out + power -->
+<div class="grid2">
+  <div class="card">
+    <div class="card-label">Part 2 · Turbine Operations</div>
+    <h2>Cut-in and cut-out wind speeds</h2>
+    <p>A wind turbine cannot operate at all wind speeds. Below the <span class="highlight">cut-in speed</span> there is too little energy; above the <span class="warn">cut-out speed</span> structural damage becomes a risk.</p>
+    <div class="svgwrap">
+      <svg width="100%" viewBox="0 0 340 108" xmlns="http://www.w3.org/2000/svg">
+        <!-- background -->
+        <rect x="0"   y="22" width="340" height="64" rx="5" fill="#f5f4f0"/>
+        <!-- dead zones -->
+        <rect x="0"   y="22" width="44"  height="64" rx="5" fill="#FCEBEB"/>
+        <rect x="296" y="22" width="44"  height="64" rx="5" fill="#FCEBEB" style="border-radius:0 5px 5px 0"/>
+        <!-- operational zone -->
+        <rect x="44"  y="22" width="252" height="64" fill="#EAF3DE"/>
+        <!-- labels dead -->
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#791F1F" x="22" y="51" text-anchor="middle">Below</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#791F1F" x="22" y="62" text-anchor="middle">cut-in</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#791F1F" x="22" y="73" text-anchor="middle">&lt;3 m/s</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#791F1F" x="318" y="51" text-anchor="middle">Above</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#791F1F" x="318" y="62" text-anchor="middle">cut-out</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#791F1F" x="318" y="73" text-anchor="middle">&gt;15 m/s</text>
+        <!-- operational label -->
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#27500A" x="170" y="50" text-anchor="middle">Operational range</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#27500A" x="170" y="62" text-anchor="middle">3–15 m/s (standard turbine)</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="9.5" fill="#27500A" x="170" y="74" text-anchor="middle">1–25 m/s (Gamesa G126)</text>
+        <!-- dashed lines -->
+        <line x1="44"  y1="12" x2="44"  y2="90" stroke="#E24B4A" stroke-width="1" stroke-dasharray="3 2"/>
+        <line x1="296" y1="12" x2="296" y2="90" stroke="#E24B4A" stroke-width="1" stroke-dasharray="3 2"/>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="8.5" fill="#888780" x="44"  y="10" text-anchor="middle">cut-in</text>
+        <text font-family="Arial,Helvetica,sans-serif" font-size="8.5" fill="#888780" x="296" y="10" text-anchor="middle">cut-out</text>
+      </svg>
+    </div>
+    <p>Students calculate what <strong>percentage of the month's data</strong> falls within the operational window. The Gamesa G126-2.625 MW has a wider range (1–25 m/s), potentially boosting capacity factor.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Part 2 · Power Calculation</div>
+    <h2>Wind power equation</h2>
+    <p>The power available in moving air depends on its density, the area swept by the rotor blades, and the <em>cube</em> of the wind speed — meaning small increases in wind speed yield large increases in power.</p>
+    <div class="eq">
+      <span class="var">P</span> = ½ × <span class="var">ρ</span> × <span class="var">A</span> × <span class="var">U³</span><br>
+      <span class="note">ρ = 1.225 kg/m³ · A = πr² · U in m/s → P in Watts</span>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="val">ρ</div><div class="lbl">Air density</div></div>
+      <div class="stat"><div class="val">A</div><div class="lbl">Swept area</div></div>
+      <div class="stat"><div class="val">U³</div><div class="lbl">Speed cubed</div></div>
+    </div>
+    <hr class="divider">
+    <p><strong>Gamesa G126-2.625 MW:</strong> rotor diameter 126 m → r = 63 m → A = π × 63² ≈ 12,469 m². Students plot the power curve from 1–25 m/s in 0.5 m/s steps to see how rapidly P grows with U.</p>
+  </div>
+</div>
+
+<!-- ROW 4: Energy -->
+<div class="card grid1">
+  <div class="card-label">Part 3 · Energy Estimation</div>
+  <h2>Combining the power curve with wind frequency to get total energy</h2>
+  <div class="grid3" style="margin-top:12px;margin-bottom:0">
+    <div>
+      <p><strong class="highlight" style="display:block;margin-bottom:5px">Step 1 · Bin the wind data</strong>Sort hub-height wind speeds (100 m) into narrow bins (0.5 m/s wide). Count how many 10-minute intervals fall in each bin to produce a <strong>wind frequency distribution</strong>.</p>
+    </div>
+    <div>
+      <p><strong class="accent" style="display:block;margin-bottom:5px">Step 2 · Compute bin energy</strong>For each bin i, multiply the power P(U<sub>i</sub>) by the total time at that speed: Δt<sub>i</sub> = count × 10 min. Convert W·min → kWh.</p>
+      <div class="eq" style="font-size:11px">E<sub>i</sub> = P(U<sub>i</sub>) × Δt<sub>i</sub></div>
+    </div>
+    <div>
+      <p><strong class="warn" style="display:block;margin-bottom:5px">Step 3 · Sum over all bins</strong>Total monthly energy is the sum across all N bins. Units: W × s → J → kWh via conversion factors.</p>
+      <div class="eq" style="font-size:11px">E = Σ E<sub>i</sub> &nbsp;&nbsp;(i = 1 to N)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 5: diurnal + summary -->
+<div class="grid2">
+  <div class="card">
+    <div class="card-label">Part 3 · Diurnal Analysis</div>
+    <h2>Average wind by hour of day</h2>
+    <p>Wind often follows a <strong>diurnal cycle</strong> — speeds can peak in the afternoon (daytime heating drives convection and turbulent mixing) and drop overnight. Plotting mean wind speed for each hour, averaged over the dataset, reveals this pattern.</p>
+    <hr class="divider">
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Extract <strong>integer hour</strong> from decimal day using <code>FLOOR</code> or modular arithmetic.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Group all observations by hour (0–23) and compute mean U for each group.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Plot hour on the x-axis, mean wind speed on y-axis — similar to a weather app display.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Key Concepts Summary</div>
+    <h2>What students learn across all three parts</h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">①</div><div class="step-text"><strong>Wind statistics</strong> — mean, σ, extremes characterize a site's resource quality.</div></div>
+      <div class="step"><div class="step-num">②</div><div class="step-text"><strong>Log-law extrapolation</strong> — surface measurements must be adjusted to hub height before use.</div></div>
+      <div class="step"><div class="step-num">③</div><div class="step-text"><strong>Operational limits</strong> — only a fraction of all wind speeds produce usable power.</div></div>
+      <div class="step"><div class="step-num">④</div><div class="step-text"><strong>P ∝ U³</strong> — the cube relationship means site wind speed is the dominant variable.</div></div>
+      <div class="step"><div class="step-num">⑤</div><div class="step-text"><strong>Energy = Power × Time</strong> — binning wind data enables realistic monthly energy estimates.</div></div>
+      <div class="step"><div class="step-num">⑥</div><div class="step-text"><strong>Diurnal cycles</strong> — wind resources are not constant; timing patterns matter for grid integration.</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
