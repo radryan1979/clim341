@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate Data Concepts: Anomalies &amp; Correlation</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a2e;
+    --ink-muted: #4a4a6a;
+    --ink-faint: #8a8aaa;
+    --surface: #fafaf8;
+    --surface-2: #f0efe8;
+    --surface-3: #e8e7de;
+    --warm-red: #c0392b;
+    --warm-red-light: #f9e8e6;
+    --cool-blue: #1a6b9e;
+    --cool-blue-light: #e3f0f9;
+    --teal: #0d7a6e;
+    --teal-light: #e0f4f2;
+    --amber: #b5630a;
+    --amber-light: #fef4e4;
+    --border: rgba(26,26,46,0.12);
+    --border-strong: rgba(26,26,46,0.25);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 16px;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Header ── */
+  .page-header {
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0 36px;
+    margin-bottom: 56px;
+  }
+  .course-tag {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1.18;
+    color: var(--ink);
+    margin-bottom: 16px;
+    max-width: 640px;
+  }
+  .header-sub {
+    font-size: 15px;
+    color: var(--ink-muted);
+    max-width: 580px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Nav pills ── */
+  .nav-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 52px;
+    flex-wrap: wrap;
+  }
+  .nav-pill {
+    padding: 7px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border-strong);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: all 0.18s;
+  }
+  .nav-pill:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .nav-pill.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* ── Sections ── */
+  .concept-section {
+    margin-bottom: 80px;
+  }
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 28px 0 10px;
+  }
+  p { margin-bottom: 16px; color: var(--ink-muted); font-size: 15.5px; }
+  p strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-left: 3px solid;
+    padding: 14px 20px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 24px 0;
+    font-size: 14.5px;
+  }
+  .callout-key { border-color: var(--teal); background: var(--teal-light); }
+  .callout-key .callout-title { color: var(--teal); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .callout-warn { border-color: var(--amber); background: var(--amber-light); }
+  .callout-warn .callout-title { color: var(--amber); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .callout p { margin: 0; font-size: 14.5px; }
+
+  /* ── SVG figure wrappers ── */
+  .fig-wrap {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px 20px;
+    margin: 32px 0;
+    overflow: hidden;
+  }
+  .fig-caption {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    text-align: center;
+    margin-top: 14px;
+    font-style: italic;
+  }
+  .fig-caption strong { font-style: normal; color: var(--ink-muted); font-weight: 500; }
+
+  /* ── Interactive controls ── */
+  .interactive-wrap {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin: 28px 0;
+  }
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .control-row label { font-size: 13px; color: var(--ink-muted); font-weight: 500; white-space: nowrap; }
+  .control-row input[type=range] { flex: 1; min-width: 120px; accent-color: var(--teal); }
+  .control-row .val { font-size: 13px; font-weight: 500; color: var(--ink); min-width: 52px; }
+  .control-row button {
+    padding: 7px 16px; border-radius: 100px;
+    border: 1px solid var(--border-strong);
+    background: #fff; font-size: 13px; font-weight: 500;
+    color: var(--ink-muted); cursor: pointer; transition: all 0.15s;
+  }
+  .control-row button:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .control-row button.active-btn { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+  /* ── Equation display ── */
+  .equation-block {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 28px;
+    text-align: center;
+    margin: 24px 0;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .equation-block .eq-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .eq-red { color: var(--warm-red); font-weight: 600; }
+  .eq-blue { color: var(--cool-blue); font-weight: 600; }
+  .eq-green { color: var(--teal); font-weight: 600; }
+
+  /* ── R-value pill ── */
+  .r-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .r-strong-pos { background: #fde8e8; color: var(--warm-red); }
+  .r-mod-pos { background: #fef4e4; color: var(--amber); }
+  .r-none { background: var(--surface-3); color: var(--ink-muted); }
+  .r-mod-neg { background: var(--cool-blue-light); color: var(--cool-blue); }
+  .r-strong-neg { background: #e0f4f2; color: var(--teal); }
+
+  /* ── Summary table ── */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .summary-table th {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-align: left;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .summary-table td {
+    padding: 10px 14px;
+    color: var(--ink-muted);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child { color: var(--ink); font-weight: 500; font-size: 13px; }
+
+  /* ── Divider ── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 60px 0;
+  }
+
+  /* ── Key term ── */
+  .term {
+    border-bottom: 1.5px dotted var(--teal);
+    color: var(--ink);
+    cursor: help;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header class="page-header">
+  <div class="course-tag">Climate &amp; Climate Change · Data Analysis Module</div>
+  <h1>Understanding Anomalies &amp; Correlation in Climate Data</h1>
+  <p class="header-sub">Two foundational tools that climate scientists use every day to find patterns, track change, and make sense of a complex system.</p>
+  <div class="header-meta">
+    <span>📖 Reading + Interactive</span>
+    <span>⏱ ~25 min</span>
+    <span>🎯 Two concepts, lots of visuals</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+<nav class="nav-pills" aria-label="Page sections">
+  <a href="#anomalies" class="nav-pill active">Part 1: Anomalies</a>
+  <a href="#correlation" class="nav-pill">Part 2: Correlation</a>
+  <a href="#causation" class="nav-pill">Correlation ≠ Causation</a>
+  <a href="#summary" class="nav-pill">Summary</a>
+</nav>
+
+
+<!-- ═══════════════════════════════ PART 1: ANOMALIES ═══════════════════════════════ -->
+<section class="concept-section" id="anomalies">
+  <div class="section-label">Part 1</div>
+  <h2>What is a Climate Anomaly?</h2>
+
+  <p>Here's a simple question: <strong>Was last July unusually hot?</strong></p>
+
+  <p>To answer that, you can't just look at the temperature and say "it was 31°C." That tells you it was warm — but was it <em>unusually</em> warm? Warmer than a typical July? That's exactly what a <span class="term" title="The difference between an observed value and the long-term average for that time period">climate anomaly</span> tells you.</p>
+
+  <p>An anomaly is the <strong>difference between what you actually observed and what is "normal"</strong> for that time of year — where "normal" means the long-term average.</p>
+
+  <div class="equation-block">
+    <span class="eq-label">The anomaly formula</span>
+    <span class="eq-red">Anomaly</span> = <span class="eq-blue">Observed Temperature</span> − <span class="eq-green">Long-Term Average</span>
+  </div>
+
+  <p>If the result is <strong>positive</strong>, it was warmer than usual. If it's <strong>negative</strong>, it was cooler. A result near zero means it was right on par.</p>
+
+  <!-- ── FIG 1: Anomaly concept ── -->
+  <div class="fig-wrap">
+    <svg width="100%" viewBox="0 0 800 220" role="img" aria-label="Diagram showing how an anomaly is calculated from observed temperature minus the long-term average">
+      <title>How an anomaly is calculated</title>
+      <desc>Three columns: observed value (31°C), long-term average (26°C), and resulting anomaly (+5°C warm), connected by arrows and a subtraction symbol.</desc>
+
+      <!-- Observed -->
+      <rect x="40" y="40" width="190" height="140" rx="12" fill="#e3f0f9" stroke="#1a6b9e" stroke-width="1"/>
+      <text x="135" y="80" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="42" fill="#1a6b9e" font-weight="600">31°C</text>
+      <text x="135" y="108" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#1a4f7a" font-weight="500" letter-spacing="0.06em">OBSERVED THIS JULY</text>
+      <text x="135" y="165" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#1a6b9e">what actually happened</text>
+
+      <!-- Minus -->
+      <text x="270" y="118" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="36" fill="#8a8aaa">−</text>
+
+      <!-- Long-term avg -->
+      <rect x="305" y="40" width="190" height="140" rx="12" fill="#e0f4f2" stroke="#0d7a6e" stroke-width="1"/>
+      <text x="400" y="80" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="42" fill="#0d7a6e" font-weight="600">26°C</text>
+      <text x="400" y="108" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#085a50" font-weight="500" letter-spacing="0.06em">LONG-TERM AVERAGE</text>
+      <text x="400" y="165" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#0d7a63">typical July over 30 years</text>
+
+      <!-- Equals -->
+      <text x="535" y="118" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="36" fill="#8a8aaa">=</text>
+      
+            <!-- Result -->
+      <rect x="570" y="40" width="190" height="140" rx="12" fill="#fde8e8" stroke="#c0392b" stroke-width="2"/>
+      <text x="665" y="80" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="42" fill="#c0392b" font-weight="600">+5°C</text>
+      <text x="665" y="108" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#9a3030" font-weight="500" letter-spacing="0.06em">ANOMALY</text>
+      <text x="665" y="165" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#c0392b">5° warmer than usual</text>
+    </svg>
+    <p class="fig-caption"><strong>Figure 1.</strong> Computing a July temperature anomaly. The observed value (31°C) minus the long-term July average (26°C) gives a +5°C warm anomaly.</p>
+  </div>
+
+  <h3>Why do scientists use anomalies instead of raw temperatures?</h3>
+  <p>Good question. You might wonder: why not just plot the actual temperatures? The reason is that <strong>raw temperatures are hard to compare</strong> across locations, and they're dominated by the seasonal cycle (summers are hot, winters are cold — that's not news). Anomalies solve these problems.</p>
+
+  <!-- ── FIG 2: Why anomalies - comparison ── -->
+  <div class="fig-wrap">
+    <svg width="100%" viewBox="0 0 800 300" role="img" aria-label="Side-by-side comparison showing that different cities have very different raw temperatures but similar anomalies, making comparison easier">
+      <title>Anomalies enable fair comparison between locations</title>
+      <desc>Two cities: Fairbanks Alaska with -20°C in winter and Tucson Arizona with 15°C. Their anomalies are both +4°C, showing they both experienced unusually warm winters relative to their own norms.</desc>
+
+      <!-- Header row -->
+      <text x="400" y="26" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#8a8aaa" font-weight="500" letter-spacing="0.06em">THE SAME WINTER — TWO VERY DIFFERENT PLACES</text>
+
+      <!-- ── Fairbanks ── -->
+      <!-- Card -->
+      <rect x="30" y="44" width="350" height="232" rx="12" fill="#f5f5f0" stroke="#d0d0c8" stroke-width="0.8"/>
+      <text x="205" y="72" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#4a4a6a" font-weight="500">Fairbanks, Alaska</text>
+
+      <!-- Raw temp -->
+      <rect x="50" y="86" width="140" height="88" rx="8" fill="#e3f0f9" stroke="#1a6b9e" stroke-width="0.8"/>
+      <text x="120" y="122" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="32" fill="#1a6b9e" font-weight="600">-20°C</text>
+      <text x="120" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#1a6b9e">actual January temp</text>
+      <text x="120" y="163" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">(avg is -24°C)</text>
+
+      <!-- Anomaly -->
+      <rect x="210" y="86" width="140" height="88" rx="8" fill="#fde8e8" stroke="#c0392b" stroke-width="1.2"/>
+      <text x="280" y="122" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="32" fill="#c0392b" font-weight="600">+4°C</text>
+      <text x="280" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#c0392b">anomaly</text>
+      <text x="280" y="163" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#9a3030">unusually warm!</text>
+
+      <text x="205" y="206" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a8aaa">Still very cold to us — but</text>
+      <text x="205" y="222" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a8aaa">4° warmer than it should be.</text>
+      <text x="205" y="252" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#c0392b" font-weight="500">→ Anomaly tells the real story</text>
+
+      <!-- ── Tucson ── -->
+      <rect x="420" y="44" width="350" height="232" rx="12" fill="#f5f5f0" stroke="#d0d0c8" stroke-width="0.8"/>
+      <text x="595" y="72" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#4a4a6a" font-weight="500">Tucson, Arizona</text>
+
+      <rect x="440" y="86" width="140" height="88" rx="8" fill="#fef4e4" stroke="#b5630a" stroke-width="0.8"/>
+      <text x="510" y="122" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="32" fill="#b5630a" font-weight="600">+15°C</text>
+      <text x="510" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#b5630a">actual January temp</text>
+      <text x="510" y="163" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">(avg is +11°C)</text>
+
+      <rect x="600" y="86" width="140" height="88" rx="8" fill="#fde8e8" stroke="#c0392b" stroke-width="1.2"/>
+      <text x="670" y="122" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="32" fill="#c0392b" font-weight="600">+4°C</text>
+      <text x="670" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#c0392b">anomaly</text>
+      <text x="670" y="163" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#9a3030">unusually warm!</text>
+
+      <text x="595" y="206" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a8aaa">Warm and sunny to us — but</text>
+      <text x="595" y="222" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a8aaa">also 4° warmer than normal.</text>
+      <text x="595" y="252" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#c0392b" font-weight="500">→ Same anomaly as Fairbanks!</text>
+    </svg>
+    <p class="fig-caption"><strong>Figure 2.</strong> Raw temperatures in Alaska and Arizona look completely different. But both cities experienced the same +4°C anomaly — meaning both were equally "unusual" relative to their own norms. Anomalies make this comparison possible.</p>
+  </div>
+
+  <h3>The baseline: what counts as "normal"?</h3>
+  <p>The long-term average is computed over a defined <strong>baseline period</strong> — typically 30 years. The World Meteorological Organization currently uses <strong>1991–2020</strong> as the standard baseline. Every anomaly you see in a climate report is measured against this reference window.</p>
+
+  <div class="callout callout-key">
+    <div class="callout-title">Key idea</div>
+    <p>An anomaly is always relative to its baseline. If you change the baseline, the anomaly values change too. That's why scientists always state which baseline they're using.</p>
+  </div>
+
+  <!-- ── FIG 3: Interactive anomaly bar chart ── -->
+  <h3>What anomalies look like: the classic red-blue chart</h3>
+  <p>Climate scientists visualize anomalies using a bar chart where <strong style="color: var(--warm-red)">red bars</strong> mean warmer than average and <strong style="color: var(--cool-blue)">blue bars</strong> mean cooler than average. This is one of the most recognized charts in climate science.</p>
+  <p>The interactive chart below shows 50 years of synthetic annual temperature anomalies. Use the controls to explore how the picture changes.</p>
+
+  <div class="interactive-wrap">
+    <div class="control-row">
+      <label>Warming trend strength</label>
+      <input type="range" id="trend-slider" min="0" max="0.06" step="0.005" value="0.03">
+      <span class="val" id="trend-val">moderate</span>
+    </div>
+    <div class="control-row">
+      <label>Variability</label>
+      <input type="range" id="noise-slider" min="0.3" max="1.8" step="0.1" value="0.9">
+      <span class="val" id="noise-val">medium</span>
+    </div>
+    <div class="control-row">
+      <button id="regen-btn" onclick="generateAnomalyData()">↻ Regenerate</button>
+    </div>
+    <div class="fig-wrap" style="margin: 0; padding: 20px 16px 12px;">
+      <svg id="anomaly-svg" width="100%" viewBox="0 0 780 260" role="img" aria-label="Interactive bar chart of annual temperature anomalies over 50 years">
+        <title>Annual temperature anomalies</title>
+        <desc>Bar chart showing annual temperature anomalies, with red bars for warm years and blue bars for cool years.</desc>
+      </svg>
+      <p class="fig-caption" id="anomaly-caption">Annual temperature anomalies, 1974–2023. Red = warmer than the 1974–2003 baseline; blue = cooler.</p>
+    </div>
+  </div>
+
+  <p>Notice how a warming trend shows up not as individual bars getting taller, but as a <strong>shift from mostly blue to mostly red</strong> over time. That's the power of the anomaly view.</p>
+
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════ PART 2: CORRELATION ═══════════════════════════════ -->
+<section class="concept-section" id="correlation">
+  <div class="section-label">Part 2</div>
+  <h2>What is Correlation?</h2>
+
+  <p>Suppose you notice something about the weather in your town: <strong>months with a lot of rain also tend to be cooler</strong>. And hot, dry months seem to go together. Is that a real pattern, or just a coincidence?</p>
+
+  <p><strong>Correlation</strong> is the statistical tool that answers this question. It measures whether two variables tend to move together — and if so, how strongly and in what direction.</p>
+
+  <div class="equation-block">
+    <span class="eq-label">The Pearson correlation coefficient</span>
+    <em>r</em> measures the strength and direction of a linear relationship between two variables
+    <br><br>
+    <span style="font-size:14px; color: var(--ink-muted);">Result always falls between −1 and +1</span>
+  </div>
+
+  <!-- ── FIG 4: The r-value spectrum ── -->
+  <div class="fig-wrap">
+    <svg width="100%" viewBox="0 0 800 180" role="img" aria-label="Spectrum showing what different r values look like as scatter plots, from perfect negative correlation at r=-1 to perfect positive correlation at r=+1">
+      <title>The correlation coefficient spectrum</title>
+      <desc>Five scatter plots showing different correlation strengths: r=-1 perfect negative, r=-0.7 moderate negative, r=0 no correlation, r=0.7 moderate positive, r=1 perfect positive</desc>
+
+      <!-- Scale bar -->
+      <defs>
+        <linearGradient id="rgrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#1a6b9e"/>
+          <stop offset="50%" stop-color="#d0d0c8"/>
+          <stop offset="100%" stop-color="#c0392b"/>
+        </linearGradient>
+      </defs>
+      <rect x="60" y="20" width="680" height="6" rx="3" fill="url(#rgrad)"/>
+      <text x="60" y="14" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="13" fill="#1a6b9e" font-weight="600">r = −1</text>
+      <text x="400" y="14" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="13" fill="#8a8aaa" font-weight="600">r = 0</text>
+      <text x="740" y="14" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="13" fill="#c0392b" font-weight="600">r = +1</text>
+
+      <!-- Mini scatter plots -->
+      <!-- r = -1 -->
+      <g transform="translate(30,40)">
+        <rect x="0" y="0" width="90" height="80" rx="6" fill="#e3f0f9" stroke="#1a6b9e" stroke-width="0.8"/>
+        <line x1="10" y1="70" x2="80" y2="10" stroke="#1a6b9e" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="14" cy="67" r="3" fill="#1a6b9e" opacity="0.8"/>
+        <circle cx="26" cy="57" r="3" fill="#1a6b9e" opacity="0.8"/>
+        <circle cx="38" cy="47" r="3" fill="#1a6b9e" opacity="0.8"/>
+        <circle cx="50" cy="37" r="3" fill="#1a6b9e" opacity="0.8"/>
+        <circle cx="62" cy="27" r="3" fill="#1a6b9e" opacity="0.8"/>
+        <circle cx="74" cy="17" r="3" fill="#1a6b9e" opacity="0.8"/>
+        <text x="45" y="96" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#1a6b9e" font-weight="500">r = −1</text>
+        <text x="45" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">perfect negative</text>
+      </g>
+
+      <!-- r = -0.7 -->
+      <g transform="translate(165,40)">
+        <rect x="0" y="0" width="90" height="80" rx="6" fill="#eaf5fd" stroke="#5a9ec0" stroke-width="0.8"/>
+        <circle cx="12" cy="62" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="24" cy="50" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="30" cy="66" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="42" cy="44" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="50" cy="35" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="58" cy="28" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="66" cy="40" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <circle cx="78" cy="18" r="3" fill="#1a6b9e" opacity="0.7"/>
+        <text x="45" y="96" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#1a6b9e" font-weight="500">r = −0.7</text>
+        <text x="45" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">moderate negative</text>
+      </g>
+
+      <!-- r = 0 -->
+      <g transform="translate(300,40)">
+        <rect x="0" y="0" width="100" height="80" rx="6" fill="#f5f5f0" stroke="#c0c0b0" stroke-width="0.8"/>
+        <circle cx="10" cy="45" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="20" cy="20" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="30" cy="60" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="42" cy="35" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="52" cy="65" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="60" cy="15" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="72" cy="50" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="84" cy="30" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <circle cx="90" cy="58" r="3" fill="#8a8aaa" opacity="0.7"/>
+        <text x="50" y="96" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa" font-weight="500">r = 0</text>
+        <text x="50" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">no relationship</text>
+      </g>
+
+      <!-- r = +0.7 -->
+      <g transform="translate(445,40)">
+        <rect x="0" y="0" width="90" height="80" rx="6" fill="#fdf0ed" stroke="#d06040" stroke-width="0.8"/>
+        <circle cx="12" cy="65" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="20" cy="58" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="30" cy="50" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="38" cy="60" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="48" cy="38" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="58" cy="32" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="66" cy="22" r="3" fill="#c0392b" opacity="0.7"/>
+        <circle cx="78" cy="18" r="3" fill="#c0392b" opacity="0.7"/>
+        <text x="45" y="96" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#c0392b" font-weight="500">r = +0.7</text>
+        <text x="45" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">moderate positive</text>
+      </g>
+
+      <!-- r = +1 -->
+      <g transform="translate(580,40)">
+        <rect x="0" y="0" width="90" height="80" rx="6" fill="#fde8e8" stroke="#c0392b" stroke-width="0.8"/>
+        <line x1="10" y1="70" x2="80" y2="10" stroke="#c0392b" stroke-width="1.5" opacity="0.5" transform="scale(1,-1) translate(0,-80)"/>
+        <line x1="10" y1="10" x2="80" y2="70" stroke="#c0392b" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="14" cy="13" r="3" fill="#c0392b" opacity="0.8"/>
+        <circle cx="26" cy="23" r="3" fill="#c0392b" opacity="0.8"/>
+        <circle cx="38" cy="33" r="3" fill="#c0392b" opacity="0.8"/>
+        <circle cx="50" cy="43" r="3" fill="#c0392b" opacity="0.8"/>
+        <circle cx="62" cy="53" r="3" fill="#c0392b" opacity="0.8"/>
+        <circle cx="74" cy="63" r="3" fill="#c0392b" opacity="0.8"/>
+        <text x="45" y="96" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#c0392b" font-weight="500">r = +1</text>
+        <text x="45" y="110" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">perfect positive</text>
+      </g>
+    </svg>
+    <p class="fig-caption"><strong>Figure 3.</strong> The correlation coefficient r runs from −1 (as one variable increases, the other always decreases — points form a perfect downward line) to +1 (both increase together — perfect upward line). Zero means no detectable linear relationship.</p>
+  </div>
+
+  <h3>A climate example: temperature and sea ice</h3>
+  <p>Arctic sea ice extent and global average temperature have a <strong>strong negative correlation</strong>. As average temperatures go up, sea ice extent goes down. The scatter plot below shows how this looks in practice (synthetic data).</p>
+
+  <!-- ── FIG 5: Interactive scatter plot ── -->
+  <div class="interactive-wrap">
+    <div class="control-row">
+      <label>Dataset</label>
+      <button class="active-btn" id="btn-ice" onclick="setScatterData('ice')">Sea ice vs. temperature</button>
+      <button id="btn-co2" onclick="setScatterData('co2')">CO₂ vs. temperature</button>
+      <button id="btn-none" onclick="setScatterData('none')">No relationship</button>
+    </div>
+    <div class="fig-wrap" style="margin:0; padding: 20px 16px 12px;">
+      <svg id="scatter-svg" width="100%" viewBox="0 0 760 300" role="img" aria-label="Scatter plot showing relationship between two climate variables">
+        <title>Scatter plot of climate variables</title>
+      </svg>
+      <p class="fig-caption" id="scatter-caption">Loading…</p>
+    </div>
+  </div>
+
+  <h3>How to interpret r in practice</h3>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>r value</th>
+        <th>Strength</th>
+        <th>Climate example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="r-pill r-strong-pos">+0.9 to +1.0</span></td>
+        <td>Very strong positive</td>
+        <td>CO₂ concentration and global mean temperature over the industrial era</td>
+      </tr>
+      <tr>
+        <td><span class="r-pill r-mod-pos">+0.4 to +0.7</span></td>
+        <td>Moderate positive</td>
+        <td>Monthly rainfall totals and river discharge in many watersheds</td>
+      </tr>
+      <tr>
+        <td><span class="r-pill r-none">−0.3 to +0.3</span></td>
+        <td>Weak or none</td>
+        <td>Daily temperature in Los Angeles vs. temperature in Tokyo (same day)</td>
+      </tr>
+      <tr>
+        <td><span class="r-pill r-mod-neg">−0.4 to −0.7</span></td>
+        <td>Moderate negative</td>
+        <td>Monthly temperature and precipitation at many mid-latitude stations</td>
+      </tr>
+      <tr>
+        <td><span class="r-pill r-strong-neg">−0.9 to −1.0</span></td>
+        <td>Very strong negative</td>
+        <td>Arctic sea ice extent and Arctic mean temperature (September)</td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════ CAUSATION ═══════════════════════════════ -->
+<section class="concept-section" id="causation">
+  <div class="section-label">Important caveat</div>
+  <h2>⚠️ Correlation Does Not Mean Causation</h2>
+
+  <p>This is probably the single most important statistical lesson you'll ever learn. Say it with us:</p>
+
+  <div class="equation-block" style="font-size:22px; letter-spacing:0.01em; background: #fef4e4; border: 1.5px solid var(--amber);">
+    <span style="color:var(--amber)">Correlation ≠ Causation</span>
+  </div>
+
+  <p>Just because two things tend to move together does not mean one is <em>causing</em> the other. There are three common explanations for a correlation:</p>
+
+  <!-- ── FIG 6: Three explanations ── -->
+  <div class="fig-wrap">
+    <svg width="100%" viewBox="0 0 800 310" role="img" aria-label="Three diagrams explaining why correlation can exist: A causes B, B causes A, or a hidden third variable C causes both A and B">
+      <title>Three explanations for a correlation between A and B</title>
+      <desc>Diagram one shows A causing B. Diagram two shows B causing A. Diagram three shows a hidden variable C causing both A and B simultaneously.</desc>
+
+      <!-- Scenario 1 -->
+      <text x="133" y="28" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#0d7a6e" font-weight="500" letter-spacing="0.06em">SCENARIO 1</text>
+
+      <rect x="30" y="44" width="80" height="44" rx="8" fill="#e0f4f2" stroke="#0d7a6e" stroke-width="1"/>
+      <text x="70" y="70" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#0d7a6e" font-weight="500">A</text>
+
+      <line x1="112" y1="66" x2="152" y2="66" stroke="#0d7a6e" stroke-width="1.5" marker-end="url(#arr-g)"/>
+      <text x="132" y="58" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">causes</text>
+
+      <rect x="154" y="44" width="80" height="44" rx="8" fill="#e0f4f2" stroke="#0d7a6e" stroke-width="1"/>
+      <text x="194" y="70" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#0d7a6e" font-weight="500">B</text>
+
+      <text x="133" y="118" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a4a6a">A directly causes B</text>
+
+      <text x="133" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">e.g. More CO₂ →</text>
+      <text x="133" y="160" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">stronger greenhouse effect</text>
+
+      <!-- Scenario 2 -->
+      <text x="400" y="28" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#1a6b9e" font-weight="500" letter-spacing="0.06em">SCENARIO 2</text>
+
+      <rect x="297" y="44" width="80" height="44" rx="8" fill="#e3f0f9" stroke="#1a6b9e" stroke-width="1"/>
+      <text x="337" y="70" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#1a6b9e" font-weight="500">A</text>
+
+      <line x1="379" y1="66" x2="419" y2="66" stroke="#8a8aaa" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="399" y="58" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">linked?</text>
+
+      <rect x="421" y="44" width="80" height="44" rx="8" fill="#e3f0f9" stroke="#1a6b9e" stroke-width="1"/>
+      <text x="461" y="70" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#1a6b9e" font-weight="500">B</text>
+
+      <text x="400" y="118" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a4a6a">Reverse causation</text>
+
+      <text x="400" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">e.g. Maybe B causes A?</text>
+      <text x="400" y="160" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">Or the arrow goes both ways?</text>
+
+      <!-- Scenario 3 — confounding -->
+      <text x="653" y="28" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#b5630a" font-weight="500" letter-spacing="0.06em">SCENARIO 3 — most common!</text>
+
+      <rect x="602" y="44" width="100" height="44" rx="8" fill="#fef4e4" stroke="#b5630a" stroke-width="1.2"/>
+      <text x="652" y="70" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#b5630a" font-weight="500">Hidden C</text>
+
+      <line x1="632" y1="88" x2="586" y2="126" stroke="#b5630a" stroke-width="1.5" marker-end="url(#arr-a)"/>
+      <line x1="672" y1="88" x2="718" y2="126" stroke="#b5630a" stroke-width="1.5" marker-end="url(#arr-a)"/>
+
+      <rect x="540" y="128" width="80" height="44" rx="8" fill="#e0f4f2" stroke="#0d7a6e" stroke-width="1"/>
+      <text x="580" y="154" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#0d7a6e" font-weight="500">A</text>
+
+      <rect x="682" y="128" width="80" height="44" rx="8" fill="#e0f4f2" stroke="#0d7a6e" stroke-width="1"/>
+      <text x="722" y="154" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="13" fill="#0d7a6e" font-weight="500">B</text>
+
+      <line x1="621" y1="150" x2="680" y2="150" stroke="#8a8aaa" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <text x="652" y="206" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a4a6a">A third variable drives both</text>
+      <text x="652" y="228" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">e.g. Hot weather → both more</text>
+      <text x="652" y="244" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">ice cream sales AND drownings</text>
+
+      <defs>
+        <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#0d7a6e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#b5630a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+    </svg>
+    <p class="fig-caption"><strong>Figure 4.</strong> Three possible reasons for a correlation. The most common trap is Scenario 3 — a hidden "confounding" variable drives both A and B, making them appear related when they aren't directly linked.</p>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">Classic cautionary tale</div>
+    <p>Ice cream sales and drowning deaths are <em>strongly correlated</em> in the summer. Does ice cream cause drowning? Of course not. Both are driven by hot weather — the hidden third variable. In climate science, always ask: could a third factor (like season, geography, or a large-scale circulation pattern) be driving both variables at once?</p>
+  </div>
+
+  <p>In climate science, finding a correlation is the <strong>beginning</strong> of an investigation, not the end. You also need:</p>
+  <p><strong>1. A physical mechanism</strong> — can you explain <em>how</em> one variable could physically cause or influence the other?<br>
+  <strong>2. Statistical significance</strong> — is the correlation strong enough that it's unlikely to be random chance, especially with short datasets?<br>
+  <strong>3. Consideration of confounders</strong> — could a third variable (like season, geography, or El Niño) be driving both?</p>
+
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════ SUMMARY ═══════════════════════════════ -->
+<section class="concept-section" id="summary">
+  <div class="section-label">Wrap-up</div>
+  <h2>Summary</h2>
+
+  <div class="fig-wrap">
+    <svg width="100%" viewBox="0 0 800 230" role="img" aria-label="Summary diagram comparing anomalies and correlation side by side">
+      <title>Summary: anomalies vs correlation</title>
+      <desc>Two side-by-side summary boxes. Left: Anomaly definition and key points. Right: Correlation definition and key points.</desc>
+
+      <!-- Anomaly box -->
+      <rect x="20" y="20" width="368" height="192" rx="12" fill="#e0f4f2" stroke="#0d7a6e" stroke-width="1"/>
+      <text x="204" y="50" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="14" fill="#0d7a6e" font-weight="500" letter-spacing="0.06em">ANOMALY</text>
+      <line x1="50" y1="60" x2="358" y2="60" stroke="#0d7a6e" stroke-width="0.6" opacity="0.4"/>
+
+      <text x="44" y="85" font-family="'DM Sans',sans-serif" font-size="13" fill="#085a50">Observed value − Long-term average</text>
+      <text x="44" y="108" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a7a72">• Positive = warmer/wetter than usual</text>
+      <text x="44" y="128" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a7a72">• Negative = cooler/drier than usual</text>
+      <text x="44" y="148" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a7a72">• Removes location and seasonal bias</text>
+      <text x="44" y="168" font-family="'DM Sans',sans-serif" font-size="12" fill="#4a7a72">• Always relative to a baseline period</text>
+      <text x="44" y="195" font-family="'Source Serif 4',serif" font-size="13" fill="#0d7a6e" font-style="italic">Red = warm  ·  Blue = cold</text>
+
+      <!-- Correlation box -->
+      <rect x="412" y="20" width="368" height="192" rx="12" fill="#fde8e8" stroke="#c0392b" stroke-width="1"/>
+      <text x="596" y="50" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="14" fill="#c0392b" font-weight="500" letter-spacing="0.06em">CORRELATION</text>
+      <line x1="442" y1="60" x2="750" y2="60" stroke="#c0392b" stroke-width="0.6" opacity="0.4"/>
+
+      <text x="436" y="85" font-family="'DM Sans',sans-serif" font-size="13" fill="#7a2020">How strongly two variables move together</text>
+      <text x="436" y="108" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a4040">• r ranges from −1 to +1</text>
+      <text x="436" y="128" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a4040">• Positive: both increase together</text>
+      <text x="436" y="148" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a4040">• Negative: one up, the other down</text>
+      <text x="436" y="168" font-family="'DM Sans',sans-serif" font-size="12" fill="#8a4040">• Does NOT prove causation</text>
+      <text x="436" y="195" font-family="'Source Serif 4',serif" font-size="13" fill="#c0392b" font-style="italic">r close to ±1 = strong  ·  r near 0 = weak</text>
+    </svg>
+    <p class="fig-caption"><strong>Figure 5.</strong> Side-by-side summary of the two concepts covered in this module.</p>
+  </div>
+
+  <p>These two tools — anomalies and correlation — appear constantly in climate science papers, IPCC reports, and news articles about the climate. Once you know how to read them, you'll see them everywhere.</p>
+
+  <div class="callout callout-key">
+    <div class="callout-title">Before your next class</div>
+    <p>Look up the current global temperature anomaly map from NASA GISS or NOAA. What regions are showing the largest positive anomalies right now? What physical processes might explain those patterns?</p>
+  </div>
+
+</section>
+
+<script>
+/* ═══════════ Seeded pseudorandom (no crypto) ═══════════ */
+function makeRng(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+
+/* ═══════════ ANOMALY BAR CHART ═══════════ */
+let rng = makeRng(42);
+
+function generateAnomalyData() {
+  rng = makeRng(Math.floor(Math.random() * 9999));
+  drawAnomalyChart();
+}
+
+function drawAnomalyChart() {
+  const trend = parseFloat(document.getElementById('trend-slider').value);
+  const noise = parseFloat(document.getElementById('noise-slider').value);
+
+  const trendLabels = ['none','very weak','weak','moderate','strong','very strong','extreme'];
+  const trendIdx = Math.round(trend / 0.06 * 6);
+  document.getElementById('trend-val').textContent = trendLabels[Math.min(trendIdx, 6)];
+
+  const noiseLabels = {'0.3':'very low','0.4':'very low','0.5':'low','0.6':'low','0.7':'low',
+    '0.8':'medium','0.9':'medium','1.0':'medium','1.1':'medium','1.2':'high',
+    '1.3':'high','1.4':'high','1.5':'very high','1.6':'very high','1.7':'very high','1.8':'very high'};
+  document.getElementById('noise-val').textContent = noiseLabels[noise.toFixed(1)] || 'medium';
+
+  const n = 50;
+  const rngLocal = makeRng(Math.floor(rng() * 99999));
+  const data = [];
+  for (let i = 0; i < n; i++) {
+    const v = trend * i + (rngLocal() * 2 - 1) * noise * 2.2;
+    data.push(v);
+  }
+
+  const svg = document.getElementById('anomaly-svg');
+  const W = 780, H = 260;
+  const padL = 36, padR = 16, padT = 20, padB = 36;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const barW = chartW / n;
+
+  const maxAbs = Math.max(...data.map(Math.abs), 0.5);
+  const yScale = (v) => padT + chartH / 2 - (v / maxAbs) * (chartH / 2 - 4);
+
+  let html = `<defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#8a8aaa" stroke-width="1.5"/></marker></defs>`;
+
+  // Grid
+  html += `<line x1="${padL}" y1="${yScale(0)}" x2="${W - padR}" y2="${yScale(0)}" stroke="#1a1a2e" stroke-width="0.8" opacity="0.25"/>`;
+  [-maxAbs * 0.5, maxAbs * 0.5].forEach(v => {
+    const y = yScale(v);
+    html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#8a8aaa" stroke-width="0.4" stroke-dasharray="4 4"/>`;
+  });
+
+  // Bars
+  data.forEach((v, i) => {
+    const x = padL + i * barW;
+    const y0 = yScale(0);
+    const y1 = yScale(v);
+    const bh = Math.abs(y1 - y0);
+    const by = Math.min(y0, y1);
+    const color = v >= 0 ? '#c0392b' : '#1a6b9e';
+    const alpha = 0.55 + 0.45 * (Math.abs(v) / maxAbs);
+    html += `<rect x="${x + 0.5}" y="${by}" width="${Math.max(barW - 1, 1)}" height="${Math.max(bh, 1)}" fill="${color}" opacity="${alpha.toFixed(2)}"/>`;
+  });
+
+  // Trend line
+  const xs = data.map((_, i) => padL + (i + 0.5) * barW);
+  const ys = data.map(v => yScale(v));
+  const n2 = data.length;
+  const meanX = xs.reduce((a, b) => a + b) / n2;
+  const meanY = ys.reduce((a, b) => a + b) / n2;
+  const num = xs.reduce((a, x, i) => a + (x - meanX) * (ys[i] - meanY), 0);
+  const den = xs.reduce((a, x) => a + (x - meanX) ** 2, 0);
+  const slope = num / den;
+  const intercept = meanY - slope * meanX;
+  const x0 = padL, x1 = W - padR;
+  if (trend > 0.005) {
+    html += `<line x1="${x0}" y1="${slope * x0 + intercept}" x2="${x1}" y2="${slope * x1 + intercept}" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5" stroke-dasharray="6 3"/>`;
+  }
+
+  // Y axis labels
+  html += `<text x="${padL - 4}" y="${yScale(0) + 4}" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">0</text>`;
+  html += `<text x="${padL - 4}" y="${yScale(maxAbs * 0.5) + 4}" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">+</text>`;
+  html += `<text x="${padL - 4}" y="${yScale(-maxAbs * 0.5) + 4}" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">−</text>`;
+
+  // X axis years
+  [0, 9, 19, 29, 39, 49].forEach(i => {
+    const year = 1974 + i;
+    const x = padL + (i + 0.5) * barW;
+    html += `<text x="${x}" y="${H - 6}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">${year}</text>`;
+  });
+
+  // Legend
+  html += `<rect x="${W - 160}" y="8" width="12" height="12" rx="2" fill="#c0392b" opacity="0.8"/>`;
+  html += `<text x="${W - 144}" y="19" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">Warmer than avg</text>`;
+  html += `<rect x="${W - 160}" y="26" width="12" height="12" rx="2" fill="#1a6b9e" opacity="0.8"/>`;
+  html += `<text x="${W - 144}" y="37" font-family="'DM Sans',sans-serif" font-size="11" fill="#8a8aaa">Cooler than avg</text>`;
+
+  svg.innerHTML = html;
+}
+
+/* ═══════════ SCATTER PLOT ═══════════ */
+const scatterDatasets = {
+  ice: {
+    points: (() => {
+      const r = makeRng(77);
+      return Array.from({length: 40}, (_, i) => {
+        const t = -0.8 + i * 0.08 + (r() - 0.5) * 0.4;
+        const ice = 7.2 - 0.55 * t + (r() - 0.5) * 0.9;
+        return [t, Math.max(ice, 2)];
+      });
+    })(),
+    xLabel: 'Arctic mean temperature anomaly (°C)',
+    yLabel: 'September sea ice extent (million km²)',
+    title: 'Arctic sea ice extent vs. temperature anomaly',
+    rApprox: '−0.87',
+    color: '#1a6b9e'
+  },
+  co2: {
+    points: (() => {
+      const r = makeRng(33);
+      return Array.from({length: 40}, (_, i) => {
+        const co2 = 320 + i * 2.2 + (r() - 0.5) * 8;
+        const temp = 0.02 * (co2 - 320) + (r() - 0.5) * 0.25;
+        return [co2, temp];
+      });
+    })(),
+    xLabel: 'Atmospheric CO₂ (ppm)',
+    yLabel: 'Global mean temperature anomaly (°C)',
+    title: 'Global temperature anomaly vs. CO₂ concentration',
+    rApprox: '+0.92',
+    color: '#c0392b'
+  },
+  none: {
+    points: (() => {
+      const r = makeRng(55);
+      return Array.from({length: 40}, () => [r() * 10, r() * 10]);
+    })(),
+    xLabel: 'Variable A (arbitrary units)',
+    yLabel: 'Variable B (arbitrary units)',
+    title: 'Two unrelated climate variables',
+    rApprox: '≈ 0.0',
+    color: '#8a8aaa'
+  }
+};
+
+function setScatterData(key) {
+  ['btn-ice','btn-co2','btn-none'].forEach(id => document.getElementById(id).classList.remove('active-btn'));
+  document.getElementById('btn-' + key).classList.add('active-btn');
+  drawScatter(key);
+}
+
+function drawScatter(key) {
+  const ds = scatterDatasets[key];
+  const pts = ds.points;
+  const svg = document.getElementById('scatter-svg');
+  const W = 760, H = 300;
+  const padL = 58, padR = 24, padT = 24, padB = 52;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  const yMin = Math.min(...ys), yMax = Math.max(...ys);
+  const xPad = (xMax - xMin) * 0.08, yPad = (yMax - yMin) * 0.1;
+
+  const sx = v => padL + (v - xMin + xPad) / (xMax - xMin + 2 * xPad) * chartW;
+  const sy = v => padT + chartH - (v - yMin + yPad) / (yMax - yMin + 2 * yPad) * chartH;
+
+  // Regression
+  const n2 = pts.length;
+  const mX = xs.reduce((a,b)=>a+b)/n2, mY = ys.reduce((a,b)=>a+b)/n2;
+  const num = pts.reduce((a,p)=>a+(p[0]-mX)*(p[1]-mY),0);
+  const den = pts.reduce((a,p)=>a+(p[0]-mX)**2,0);
+  const slope = num/den, intercept = mY - slope*mX;
+
+  let html = '';
+
+  // Grid
+  for (let i = 0; i <= 4; i++) {
+    const x = padL + i * chartW / 4;
+    const y = padT + i * chartH / 4;
+    html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT+chartH}" stroke="#e0e0d8" stroke-width="0.5"/>`;
+    html += `<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="#e0e0d8" stroke-width="0.5"/>`;
+  }
+
+  // Regression line
+  if (key !== 'none') {
+    const x0v = xMin - xPad, x1v = xMax + xPad;
+    html += `<line x1="${sx(x0v)}" y1="${sy(slope*x0v+intercept)}" x2="${sx(x1v)}" y2="${sy(slope*x1v+intercept)}" stroke="${ds.color}" stroke-width="1.5" opacity="0.45" stroke-dasharray="6 3"/>`;
+  }
+
+  // Points
+  pts.forEach(p => {
+    html += `<circle cx="${sx(p[0])}" cy="${sy(p[1])}" r="5" fill="${ds.color}" opacity="0.65"/>`;
+  });
+
+  // Axes
+  html += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+chartH}" stroke="#8a8aaa" stroke-width="0.8"/>`;
+  html += `<line x1="${padL}" y1="${padT+chartH}" x2="${padL+chartW}" y2="${padT+chartH}" stroke="#8a8aaa" stroke-width="0.8"/>`;
+
+  // Axis labels
+  const xTicks = 5;
+  for (let i = 0; i <= xTicks; i++) {
+    const v = xMin + (xMax - xMin) * i / xTicks;
+    const x = sx(v);
+    html += `<text x="${x}" y="${padT+chartH+16}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">${v.toFixed(key==='co2'?0:1)}</text>`;
+  }
+  for (let i = 0; i <= 4; i++) {
+    const v = yMin + (yMax - yMin) * i / 4;
+    const y = sy(v);
+    html += `<text x="${padL-6}" y="${y+4}" text-anchor="end" font-family="'DM Sans',sans-serif" font-size="10" fill="#8a8aaa">${v.toFixed(1)}</text>`;
+  }
+
+  // Axis titles
+  html += `<text x="${padL+chartW/2}" y="${H-4}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#4a4a6a">${ds.xLabel}</text>`;
+  html += `<text x="${14}" y="${padT+chartH/2}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#4a4a6a" transform="rotate(-90, 14, ${padT+chartH/2})">${ds.yLabel}</text>`;
+
+  // r badge
+  const badgeX = padL + chartW - 8;
+  html += `<rect x="${badgeX - 78}" y="${padT+6}" width="80" height="26" rx="6" fill="${ds.color}" opacity="0.12" stroke="${ds.color}" stroke-width="0.8"/>`;
+  html += `<text x="${badgeX - 38}" y="${padT+23}" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="${ds.color}" font-weight="600">r = ${ds.rApprox}</text>`;
+
+  svg.innerHTML = html;
+  document.getElementById('scatter-caption').innerHTML = `<strong>Figure.</strong> ${ds.title}. Each point is one month or year of data. The dashed line is the best-fit trend.`;
+}
+
+/* ═══════════ Init ═══════════ */
+drawAnomalyChart();
+setScatterData('ice');
+
+document.getElementById('trend-slider').addEventListener('input', drawAnomalyChart);
+document.getElementById('noise-slider').addEventListener('input', drawAnomalyChart);
+</script>
+</body>
+</html>
